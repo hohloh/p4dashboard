@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perforce Dashboard</title>
+    <link rel="icon" href="/favicon.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Base Colors - Light Mode */
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+
+            --danger-bg: #fef2f2;
+            --danger-text: #ef4444;
+            --danger-border: #fecaca;
+
+            --success-bg: #f0fdf4;
+            --success-text: #16a34a;
+
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+            --radius: 8px;
+            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        [data-theme="dark"] {
+            /* Base Colors - Dark Mode */
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+
+            --primary: #3b82f6;
+            --primary-hover: #60a5fa;
+
+            --danger-bg: #450a0a;
+            --danger-text: #fca5a5;
+            --danger-border: #7f1d1d;
+
+            --success-bg: #052e16;
+            --success-text: #86efac;
+
+            --input-bg: #020617;
+            --input-border: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+
+        /* Utilities */
+        .hidden {
+            display: none !important;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .justify-end {
+            justify-content: flex-end;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+        }
+
+        /* Layout */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 2rem;
+        }
+
+        /* View Container */
+        .view-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .view-center {
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Headers */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Forms */
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            color: var(--text-muted);
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 0.6rem;
+            border-radius: 6px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.1s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Modern Dropdown */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 12px) center;
+            background-size: 1em;
+            padding-right: 2.5rem;
+        }
+
+        [data-theme="dark"] select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        }
+
+
+        /* Buttons */
+        button {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.1s;
+            background: var(--bg-card);
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-outline {
+            border-color: var(--border-color);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-card);
+            border-color: var(--text-muted);
+        }
+
+        .btn-outline-danger {
+            border-color: var(--danger-border);
+            color: var(--danger-text);
+            background: transparent;
+        }
+
+        .btn-outline-danger:hover {
+            background: var(--danger-bg);
+            border-color: var(--danger-text);
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-muted);
+            border-color: transparent;
+        }
+
+        .btn-ghost:hover {
+            color: var(--text-main);
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Tabs (Linear Style) */
+        .tabs-nav {
+            display: flex;
+            gap: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.8rem 0;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            position: relative;
+            cursor: pointer;
+            transition: color 0.1s;
+            border-radius: 0;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .tab-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px 2px 0 0;
+            animation: tabSlide 0.2s ease-out;
+        }
+
+        @keyframes tabSlide {
+            from {
+                transform: scaleX(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+        }
+
+        /* Tables */
+        .table-container {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--bg-card);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: var(--bg-body);
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        [data-theme="dark"] tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* User Badge */
+        .user-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text-main);
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Details - Modern */
+        details {
+            border-radius: 6px;
+            transition: background-color 0.15s;
+        }
+
+        details[open] {
+            background: var(--bg-body);
+        }
+
+        details>summary {
+            cursor: pointer;
+            list-style: none;
+            outline: none;
+            padding-right: 20px;
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        details>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details>summary::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            border: solid var(--text-muted);
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: translateY(-50%) rotate(45deg);
+            transition: transform 0.2s;
+            opacity: 0.5;
+        }
+
+        details[open]>summary::after {
+            transform: translateY(-50%) rotate(-135deg);
+        }
+
+        details>summary:hover::after {
+            opacity: 1;
+            border-color: var(--primary);
+        }
+
+        .desc-preview {
+            display: inline-block;
+        }
+
+        .desc-full {
+            margin-top: 0.5rem;
+            padding: 0.5rem 0 0.5rem 0.5rem;
+            border-left: 2px solid var(--border-color);
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            max-width: 400px;
+            width: 100%;
+            transform: scale(0.95);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.open .modal-content {
+            transform: scale(1);
+        }
+
+        /* Tooltip */
+        .tooltip-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .tooltip-trigger {
+            cursor: help;
+            color: var(--text-muted);
+            margin-left: 6px;
+        }
+
+        .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: var(--text-main);
+            color: var(--bg-card);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            pointer-events: none;
+            transition: all 0.15s;
+            z-index: 10;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 8px;
+        }
+
+        .tooltip-container:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Loading */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Messages */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-md);
+            transform: translateY(1rem);
+            opacity: 0;
+            transition: all 0.2s;
+            z-index: 50;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-success {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid var(--success-bg);
+        }
+
+        .toast-error {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+            border: 1px solid var(--danger-bg);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .tabs-nav {
+                overflow-x: auto;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                position: fixed;
+                bottom: 1rem;
+                right: 1rem;
+                background: var(--bg-card);
+                padding: 0.5rem;
+                border-radius: 100px;
+                box-shadow: var(--shadow-md);
+                border: 1px solid var(--border-color);
+                z-index: 40;
+            }
+
+            .btn-outline {
+                background: var(--bg-card);
+            }
+        }
+    </style>
+</head>
+
+<body data-theme="light">
+
+    <div class="container">
+
+        <!-- Login View -->
+        <div id="loginView" class="view-container view-center">
+            <div class="card" style="width: 100%; max-width: 380px;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2>Perforce Dashboard</h2>
+                    <p class="text-muted text-sm" style="margin-top: 0.5rem;">Open Connection</p>
+                </div>
+
+                <form id="loginForm" onsubmit="return false;">
+                    <div class="mb-4">
+                        <label>Server</label>
+                        <input id="serverInput" placeholder="ssl:perforce.example.com:1666" required />
+                    </div>
+                    <div class="mb-4">
+                        <label>User</label>
+                        <input id="userInput" placeholder="username" required />
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center">
+                            <label>Password / Ticket</label>
+                            <label style="cursor: pointer; display: flex; align-items: center; font-size: 0.75rem;"
+                                class="text-muted">
+                                <input type="checkbox" id="isTicketCheck" style="width: auto; margin-right: 4px;"> Is
+                                Ticket
+                            </label>
+                        </div>
+                        <input id="secretInput" type="password" placeholder="••••••••" />
+                    </div>
+
+                    <div class="mb-4 flex justify-between items-center">
+                        <div class="tooltip-container">
+                            <label
+                                style="cursor: pointer; display: flex; align-items: center; margin: 0; color: var(--text-main);">
+                                <input type="checkbox" id="rememberCheck" style="width: auto; margin-right: 6px;">
+                                Remember me
+                            </label>
+                            <span class="tooltip-trigger">?</span>
+                            <div class="tooltip-content">Saved to <code>.../data/creds.json</code></div>
+                        </div>
+                    </div>
+
+                    <button id="btnLogin" class="btn-primary w-full" style="padding: 0.75rem;">
+                        Sign In <span id="loginSpinner" class="spinner hidden"
+                            style="vertical-align: middle; margin-left: 8px; border-color: rgba(255,255,255,0.3); border-top-color: white;"></span>
+                    </button>
+                </form>
+
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <button id="themeToggleLogin" class="btn-ghost text-sm">Switch to Dark Mode</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Dashboard View -->
+        <div id="dashboardView" class="view-container hidden">
+            <header>
+                <div>
+                    <h1>Perforce Dashboard</h1>
+                    <span id="welcomeMsg" class="text-muted text-sm"></span>
+                </div>
+                <div class="header-actions flex gap-2">
+                    <button id="themeToggleDash" class="btn-ghost"
+                        style="font-size: 1.2rem; padding: 0.4rem;">🌙</button>
+                    <button id="btnLogoutPrompt" class="btn-outline-danger">Log Out</button>
+                </div>
+            </header>
+
+            <!-- Workspace Picker -->
+            <div class="mb-4">
+                <div class="flex gap-2 items-center">
+                    <select id="workspaceSelect" style="max-width: 300px; font-weight: 500;"></select>
+                    <span id="wsSpinner" class="spinner hidden"></span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="history">Recent History</button>
+                <button class="tab-btn" data-tab="pending">My Pending Files</button>
+                <button class="tab-btn" data-tab="team">Team View</button>
+            </div>
+
+            <!-- Content Areas -->
+
+            <!-- History -->
+            <div id="history" class="tab-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base font-medium m-0">Latest Changes</h3>
+                    <button id="btnRefreshHistory" class="btn-outline text-sm">Refresh</button>
+                </div>
+                <div class="table-container">
+                    <table id="historyTable">
+                        <thead>
+                            <tr>
+                                <th width="80">CL</th>
+                                <th width="120">Date</th>
+                                <th width="140">User</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pending -->
+            <div id="pending" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base font-medium m-0">Open Files</h3>
+                    <button id="btnRefreshPending" class="btn-outline text-sm">Refresh</button>
+                </div>
+                <div class="table-container">
+                    <table id="pendingTable">
+                        <thead>
+                            <tr>
+                                <th width="80">CL</th>
+                                <th width="100">Action</th>
+                                <th>File</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Team -->
+            <div id="team" class="tab-content hidden">
+                <div class="flex flex-wrap items-end gap-4 mb-4">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label>Team Member</label>
+                        <select id="teamUserSelect">
+                            <option value="">Select User...</option>
+                        </select>
+                    </div>
+                    <button id="btnLoadTeam" class="btn-outline-primary text-sm" style="height: 42px; width: auto;">View
+                        Files</button>
+                </div>
+                <div class="table-container">
+                    <table id="teamTable">
+                        <thead>
+                            <tr>
+                                <th width="80">CL</th>
+                                <th width="100">Action</th>
+                                <th>File</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div id="logoutModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-top: 0;">Confirm Logout</h3>
+            <p class="text-muted">Are you sure you want to log out? This will clear your session.</p>
+            <div class="flex justify-end gap-2 mt-4">
+                <button id="btnCancelLogout" class="btn-ghost">Cancel</button>
+                <button id="btnConfirmLogout" class="btn-outline-danger">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description Modal (Mobile) -->
+    <div id="descModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 90vw; max-height: 80vh; display: flex; flex-direction: column;">
+            <div class="flex justify-between items-center mb-4">
+                <h3 style="margin: 0;">Description</h3>
+                <button id="btnCloseDesc" class="btn-ghost"
+                    style="padding: 4px 8px; font-size: 1.2rem;">&times;</button>
+            </div>
+            <div id="descModalContent"
+                style="overflow-y: auto; white-space: pre-wrap; font-family: monospace; font-size: 0.9rem; color: var(--text-muted); padding: 1rem; background: var(--bg-body); border-radius: 6px;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const $ = s => document.querySelector(s);
+        const $$ = s => document.querySelectorAll(s);
+
+        // State
+        let sessionAuth = null;
+        let currentTab = 'history';
+        let hasSavedTicket = false;
+
+        // Theme
+        function setTheme(mode) {
+            document.body.setAttribute('data-theme', mode);
+            localStorage.setItem('theme', mode);
+            updateThemeUI(mode);
+        }
+        function toggleTheme() {
+            const current = localStorage.getItem('theme') === 'dark' ? 'light' : 'dark';
+            setTheme(current);
+        }
+        function updateThemeUI(mode) {
+            const isDark = mode === 'dark';
+            $('#themeToggleLogin').textContent = isDark ? "Switch to Light Mode" : "Switch to Dark Mode";
+            $('#themeToggleDash').textContent = isDark ? "☀️" : "🌙";
+        }
+        $('#themeToggleLogin').onclick = toggleTheme;
+        $('#themeToggleDash').onclick = toggleTheme;
+        setTheme(localStorage.getItem('theme') || 'light');
+
+
+        // Color Generator with Contrast Check
+        function getUserStyles(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            // High saturation, Medium-Light lightness
+            const h = Math.abs(hash % 360);
+            const s = 65 + (Math.abs(hash) % 35);
+            const l = 50 + (Math.abs(hash) % 25);
+
+            // HSL to RGB conversion for luminance (approximate)
+            const sat = s / 100;
+            const lit = l / 100;
+            const c = (1 - Math.abs(2 * lit - 1)) * sat;
+            const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+            const m = lit - c / 2;
+
+            let r = 0, g = 0, b = 0;
+            if (0 <= h && h < 60) { r = c; g = x; b = 0; }
+            else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
+            else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
+            else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
+            else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
+            else if (300 <= h && h < 360) { r = c; g = 0; b = x; }
+
+            // Perceived brightness formula (rec 601)
+            const br = ((r + m) * 255 * 299 + (g + m) * 255 * 587 + (b + m) * 255 * 114) / 1000;
+
+            // Threshold ~128 (0-255). If bright, use dark text.
+            const textColor = br > 140 ? '#0f172a' : '#ffffff';
+
+            return { bg: `hsl(${h}, ${s}%, ${l}%)`, text: textColor };
+        }
+
+        // API Helper
+        async function api(path, body) {
+            try {
+                const res = await fetch(path, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body || {})
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || res.statusText);
+                return data;
+            } catch (e) {
+                showToast(e.message, 'error');
+                throw e;
+            }
+        }
+
+        // Toast
+        function showToast(msg, type = 'success') {
+            const el = $('#toast');
+            el.textContent = msg;
+            el.className = `toast toast-${type} show`;
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // Auth & Init
+        async function init() {
+            try {
+                const saved = await (await fetch('/api/p4/creds')).json();
+                if (saved.saved) {
+                    $('#serverInput').value = saved.server || "";
+                    $('#userInput').value = saved.user || "";
+                    if (saved.hasTicket) {
+                        hasSavedTicket = true;
+                        $('#secretInput').placeholder = "Saved ticket active";
+                        $('#rememberCheck').checked = true;
+                    }
+                }
+            } catch { }
+        }
+        init();
+
+        // Login
+        $('#btnLogin').onclick = async () => {
+            const server = $('#serverInput').value.trim();
+            const user = $('#userInput').value.trim();
+            const secret = $('#secretInput').value;
+            const isTicket = $('#isTicketCheck').checked;
+
+            if (!server || !user) return showToast('Server and User required', 'error');
+
+            $('#loginSpinner').classList.remove('hidden');
+
+            const body = { server, user };
+            if (!hasSavedTicket || secret) {
+                if (isTicket) body.ticket = secret; else body.password = secret;
+            }
+
+            try {
+                const { workspaces } = await api('/api/p4/workspaces', body);
+                sessionAuth = { ...body };
+
+                // Save?
+                if ($('#rememberCheck').checked && !hasSavedTicket) {
+                    api('/api/p4/saveCreds', { server, user, [isTicket ? 'ticket' : 'password']: secret });
+                }
+
+                // Setup Dashboard
+                $('#welcomeMsg').textContent = `${user} @ ${server}`;
+                const sel = $('#workspaceSelect');
+                sel.innerHTML = '';
+                workspaces.forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w.name;
+                    opt.textContent = w.name;
+                    sel.appendChild(opt);
+                });
+
+                switchToView('dashboard');
+                loadUsers(); // for team view
+                loadTab(currentTab); // Auto load initial tab
+
+            } catch (e) {
+                // toast handled in api
+            } finally {
+                $('#loginSpinner').classList.add('hidden');
+            }
+        };
+
+        // View Switch
+        function switchToView(name) {
+            if (name === 'login') {
+                $('#loginView').classList.remove('hidden');
+                $('#dashboardView').classList.add('hidden');
+            } else {
+                $('#loginView').classList.add('hidden');
+                $('#dashboardView').classList.remove('hidden');
+            }
+        }
+
+        // Logout
+        $('#btnLogoutPrompt').onclick = () => $('#logoutModal').classList.add('open');
+        $('#btnCancelLogout').onclick = () => $('#logoutModal').classList.remove('open');
+        $('#btnConfirmLogout').onclick = async () => {
+            await api('/api/p4/clearCreds');
+            location.reload();
+        };
+
+        // Tabs
+        $$('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                $$('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTab = btn.dataset.tab;
+
+                $$('.tab-content').forEach(c => c.classList.add('hidden'));
+                $(`#${currentTab}`).classList.remove('hidden');
+
+                loadTab(currentTab); // Auto Refresh on click
+            };
+        });
+
+        // Workspace Auto Refresh
+        $('#workspaceSelect').onchange = () => {
+            loadTab(currentTab);
+        };
+
+        // Load Logic
+        async function loadTab(tab) {
+            const client = $('#workspaceSelect').value;
+            const base = getAuthCtx();
+
+            if (tab === 'history') {
+                renderTable('historyTable', [], true); // Clear/loading
+                const { changes } = await api('/api/p4/changes', { ...base, client, limit: 50 });
+                renderHistory(changes);
+            }
+            else if (tab === 'pending') {
+                renderTable('pendingTable', [], true);
+                const { files } = await api('/api/p4/pending', { ...base, client });
+                renderPending(files, 'pendingTable');
+            }
+        }
+        $('#btnRefreshHistory').onclick = () => loadTab('history');
+        $('#btnRefreshPending').onclick = () => loadTab('pending');
+
+        // Team Load
+        async function loadUsers() {
+            const { users } = await api('/api/p4/users', getAuthCtx());
+            const sel = $('#teamUserSelect');
+            sel.innerHTML = '<option value="">Select User...</option>';
+            if (users) users
+                .sort((a, b) => a.User.localeCompare(b.User))
+                .forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = u.User;
+                    opt.textContent = `${u.User} (${u.FullName})`;
+                    sel.appendChild(opt);
+                });
+        }
+
+        // Auto-Refresh Team View on Selection
+        $('#teamUserSelect').onchange = () => {
+            if ($('#teamUserSelect').value) {
+                $('#btnLoadTeam').click();
+            }
+        };
+
+        // Mobile Description Modal
+        const descModal = $('#descModal');
+        $('#btnCloseDesc').onclick = () => descModal.classList.remove('open');
+        descModal.onclick = (e) => {
+            if (e.target === descModal) descModal.classList.remove('open');
+        };
+
+        function showDescModal(text) {
+            $('#descModalContent').textContent = text;
+            descModal.classList.add('open');
+        }
+
+        $('#btnLoadTeam').onclick = async () => {
+            const targetUser = $('#teamUserSelect').value;
+            const client = $('#workspaceSelect').value;
+            if (!targetUser) return showToast('Select a user first', 'error');
+
+            renderTable('teamTable', [], true);
+            const { files } = await api('/api/p4/pending', { ...getAuthCtx(), targetUser, client });
+            renderPending(files, 'teamTable');
+        };
+
+
+        // Renderers
+        function renderTable(id, rows, loading = false) {
+            const tbody = $(`#${id} tbody`);
+            tbody.innerHTML = '';
+            if (loading) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading...</td></tr>';
+                return;
+            }
+            if (!rows || rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2rem; color: var(--text-muted);">No items found</td></tr>';
+            }
+        }
+
+        function renderHistory(changes) {
+            const tbody = $('#historyTable tbody');
+            tbody.innerHTML = '';
+            if (!changes || !changes.length) return renderTable('historyTable', []);
+
+            changes.forEach(c => {
+                const desc = (c.desc || "").trim();
+                const short = desc.split('\n')[0];
+                const hasMore = desc.length > short.length;
+
+                const { bg, text } = getUserStyles(c.user);
+
+                let descHtml = `<span>${short}</span>`;
+                if (hasMore) {
+                    descHtml = `<details><summary class="desc-preview">${short}</summary><div class="desc-full">${desc}</div></details>`;
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+            <td><span class="font-medium">${c.change}</span></td>
+            <td class="text-muted text-sm">${c.date}</td>
+            <td><span class="user-badge" style="background:${bg}; color:${text};">${c.user}</span></td>
+            <td class="desc-cell">${descHtml}</td>
+         `;
+
+                // Mobile Click Intercept
+                const descCell = tr.querySelector('.desc-cell');
+                descCell.onclick = (e) => {
+                    if (window.innerWidth <= 600) {
+                        if (e.target.closest('summary')) e.preventDefault();
+                        showDescModal(desc);
+                    }
+                };
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderPending(files, tableId) {
+            const tbody = $(`#${tableId} tbody`);
+            tbody.innerHTML = '';
+            if (!files || !files.length) return renderTable(tableId, []);
+
+            files.forEach(f => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+            <td>${f.change}</td>
+            <td><span style="font-size:0.75rem; padding: 2px 6px; border:1px solid var(--border-color); border-radius:4px;">${f.action}</span></td>
+            <td style="font-family: monospace; word-break: break-all;">${f.depotFile}</td>
+        `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getAuthCtx() {
+            return sessionAuth || { server: $('#serverInput').value, user: $('#userInput').value };
+        }
+
+    </script>
+</body>
+
+</html>

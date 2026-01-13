@@ -1,0 +1,6 @@
+node_modules/
+p4dashboard.tar
+data/
+.env
+.DS_Store
+npm-debug.log
