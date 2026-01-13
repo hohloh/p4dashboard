@@ -40,7 +40,7 @@ The app will be available at `http://localhost:4444`.
 ## Configuration
 
 - **Data Persistence**: Credentials are stored in `./data`, mapped to a volume in `docker-compose.yml`.
-- **P4TRUST** A .p4trust entry needs to be mapped if you are connecting to a Perforce server for the first time from the host device.
+- **P4TRUST**: A .p4trust entry needs to be mapped if you are connecting to a Perforce server for the first time from the host device.
 - **Ports**: Default port is `4444`.
 
 ## Development
