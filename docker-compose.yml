@@ -1,11 +1,6 @@
-# =============================================================================
-# Perforce Dashboard - Docker Compose
-# Deploy with: docker-compose up -d
-# =============================================================================
-
 services:
   p4dashboard:
-    # Image must be pre-built and loaded on NAS (see README for instructions)
+    # Image must be pre-built and loaded on host
     image: p4dashboard:latest
     container_name: p4dashboard
     restart: unless-stopped
@@ -18,11 +13,11 @@ services:
       - /your/local/p4trust/path:/app/p4trustdir
     environment:
       # Optional: Set timezone (default: UTC)
-      - TZ=Europe/Berlin
+      - TZ=
       # .p4trust
       - P4TRUST=/app/p4trustdir/.p4trust
       # Health check is defined in Dockerfile
 
-      # Named volume - managed by Docker/Portainer
+      # Named volume - managed by Docker
 volumes:
   p4dashboard-data:
