@@ -17,7 +17,7 @@ Since P4V doesn't offer a WebUI or mobile app, this project provides a lightweig
 
 ## Quick Start
 
-### 1. Build the Image
+### 1. Build the Image (or use the pre-built release)
 
 ```bash
 docker build -t p4dashboard .
