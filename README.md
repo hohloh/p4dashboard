@@ -17,10 +17,16 @@ Since P4V doesn't offer a WebUI or mobile app, this project provides a lightweig
 
 ## Quick Start
 
-### 1. Build the Image (or use the pre-built release)
-
+### 1. Load Image
+**Option A: Load Pre-built Image**
+If you have the `p4dashboard.tar` file:
 ```bash
-docker build -t p4dashboard .
+docker load -i p4dashboard.tar
+```
+
+**Option B: Build from Source**
+```bash
+docker build -t p4dashboard:0.1.0 .
 ```
 
 ### 2. Run with Docker Compose
