@@ -4,6 +4,7 @@
 <p align="center">
   <img alt="GPL 2.0 License" src="https://img.shields.io/badge/License-GPL%202.0-orange"/>
   <img alt="Current Release" src="https://img.shields.io/badge/Release-0.1.0-blue"/>
+  <img alt="Current Release" src="https://img.shields.io/badge/AI_usage-Google_Antigravity-purple"/>
 </p>
 <br/>
 Since P4V doesn't offer a WebUI or mobile app, this project provides a lightweight Node.js dashboard for Perforce (P4), optimized for mobile viewing and designed for deployment in standard Docker environments.
